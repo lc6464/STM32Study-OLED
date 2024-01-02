@@ -23,7 +23,7 @@ static uint8_t ssd1306_WriteCommand(I2C_HandleTypeDef *hi2c, uint8_t command)
 uint8_t ssd1306_Init(I2C_HandleTypeDef *hi2c)
 {
     // Wait for the screen to boot
-    HAL_Delay(100);
+    HAL_Delay(50);
     int status = 0;
 
     // Init LCD
@@ -52,7 +52,7 @@ uint8_t ssd1306_Init(I2C_HandleTypeDef *hi2c)
     status += ssd1306_WriteCommand(hi2c, 0x22);
 
     status += ssd1306_WriteCommand(hi2c, 0xDA);   // Set com pins hardware configuration
-    status += ssd1306_WriteCommand(hi2c, SSD1306_COM_LR_REMAP << 5 | SSD1306_COM_ALTERNATIVE_PIN_CONFIG << 4 | 0x02);   
+    status += ssd1306_WriteCommand(hi2c, SSD1306_COM_LR_REMAP << 5 | SSD1306_COM_ALTERNATIVE_PIN_CONFIG << 4 | 0x02);
 
     status += ssd1306_WriteCommand(hi2c, 0xDB);   // Set vcomh
     status += ssd1306_WriteCommand(hi2c, 0x20);   // 0x20,0.77xVcc

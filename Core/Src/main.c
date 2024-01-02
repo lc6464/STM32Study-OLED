@@ -49,8 +49,6 @@
 
 /* USER CODE BEGIN PV */
 
-char uint32_to_char_array_buffer[11];
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,12 +59,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-char *uint32_to_char_array(uint32_t num)
-{
-  sprintf(uint32_to_char_array_buffer, "%lu", num);
-  return uint32_to_char_array_buffer;
-}
 
 /* USER CODE END 0 */
 
@@ -107,17 +99,10 @@ int main(void)
     Error_Handler();
   }
 
-  ssd1306_Fill(Black);
-
   ssd1306_SetCursor(0, 0);
-  ssd1306_WriteString("Hello, ", Font_11x18, White);
-  ssd1306_SetCursor(0, 20);
-  ssd1306_WriteString("SSD1306!", Font_11x18, White);
+  ssd1306_WriteString("  !", Font_Mine, White);
 
-  ssd1306_SetCursor(0, 52);
-  ssd1306_WriteString("Count: ", Font_7x10, White);
-
-  uint32_t counter = 0;
+  ssd1306_UpdateScreen(&hi2c2);
 
   /* USER CODE END 2 */
 
@@ -125,15 +110,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    ssd1306_SetCursor(42, 52);
-    ssd1306_WriteString(uint32_to_char_array(counter++), Font_7x10, White);
 
-    ssd1306_UpdateScreen(&hi2c2);
-
-    if (counter == 1000000)
-    {
-      counter = 0;
-    }
 
     /* USER CODE END WHILE */
 
