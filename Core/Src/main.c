@@ -26,6 +26,7 @@
 
 #include "ssd1306.h"
 #include "fonts.h"
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -48,6 +49,8 @@
 
 /* USER CODE BEGIN PV */
 
+char uint32_to_char_array_buffer[11];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +61,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+char *uint32_to_char_array(uint32_t num)
+{
+  sprintf(uint32_to_char_array_buffer, "%lu", num);
+  return uint32_to_char_array_buffer;
+}
 
 /* USER CODE END 0 */
 
@@ -97,31 +106,18 @@ int main(void)
   {
     Error_Handler();
   }
-  HAL_Delay(1000);
 
   ssd1306_Fill(Black);
-  ssd1306_UpdateScreen(&hi2c2);
 
-  HAL_Delay(1000);
-
-  // Write data to local screenbuffer
   ssd1306_SetCursor(0, 0);
-  ssd1306_WriteString("ssd1306", Font_11x18, White);
+  ssd1306_WriteString("Hello, ", Font_11x18, White);
+  ssd1306_SetCursor(0, 20);
+  ssd1306_WriteString("SSD1306!", Font_11x18, White);
 
-  ssd1306_SetCursor(0, 36);
-  ssd1306_WriteString("4ilo", Font_11x18, White);
+  ssd1306_SetCursor(0, 52);
+  ssd1306_WriteString("Count: ", Font_7x10, White);
 
-  // Draw rectangle on screen
-  for (uint8_t i = 0; i < 28; i++)
-  {
-    for (uint8_t j = 0; j < 64; j++)
-    {
-      ssd1306_DrawPixel(100 + i, 0 + j, White);
-    }
-  }
-
-  // Copy all data from local screenbuffer to the screen
-  ssd1306_UpdateScreen(&hi2c2);
+  uint32_t counter = 0;
 
   /* USER CODE END 2 */
 
@@ -129,6 +125,15 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    ssd1306_SetCursor(42, 52);
+    ssd1306_WriteString(uint32_to_char_array(counter++), Font_7x10, White);
+
+    ssd1306_UpdateScreen(&hi2c2);
+
+    if (counter == 1000000)
+    {
+      counter = 0;
+    }
 
     /* USER CODE END WHILE */
 
