@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "rtc.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,6 +92,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C2_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
   // Init lcd using one of the stm32HAL i2c typedefs
@@ -99,9 +101,11 @@ int main(void)
     Error_Handler();
   }
 
-  uint8_t i = 0;
-  uint8_t d = 0;
-  uint16_t j = 0;
+  RTC_TimeTypeDef time;
+  char timeString[12];
+  uint8_t seconds = 0;
+
+  ssd1306_Fill(Black);
 
   /* USER CODE END 2 */
 
@@ -109,47 +113,22 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    for (; j < 62; j++)
+    HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc, NULL, RTC_FORMAT_BIN);
+
+    if (time.Seconds == seconds)
     {
-      ssd1306_Fill(Black);
-
-      ssd1306_SetCursor(j, d == 0 ? i++ : i--);
-      ssd1306_WriteString("Lily", Font_16x26, White);
-
-      ssd1306_UpdateScreen(&hi2c2);
-
-      if (i > 36)
-      {
-        d = 1;
-      }
-      else if (i == 0)
-      {
-        d = 0;
-      }
-
-      // HAL_Delay(10);
+      continue;
     }
 
-    for (; j > 0; j--)
-    {
-      ssd1306_Fill(Black);
+    seconds = time.Seconds;
 
-      ssd1306_SetCursor(j, d == 0 ? i++ : i--);
-      ssd1306_WriteString("Lily", Font_16x26, White);
+    sprintf(timeString, "%.2hu:%.2hu:%.2hu", time.Hours, time.Minutes, time.Seconds);
 
-      ssd1306_UpdateScreen(&hi2c2);
+    ssd1306_SetCursor(20, 23);
+    ssd1306_WriteString(timeString, Font_11x18, White);
 
-      if (i > 36)
-      {
-        d = 1;
-      }
-      else if (i == 0)
-      {
-        d = 0;
-      }
-
-      // HAL_Delay(10);
-    }
+    ssd1306_UpdateScreen(&hi2c2);
 
     /* USER CODE END WHILE */
 
@@ -175,8 +154,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
    * in the RCC_OscInitTypeDef structure.
    */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI | RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = 4;
