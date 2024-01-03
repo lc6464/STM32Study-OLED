@@ -2,7 +2,7 @@
 
 
 // Screenbuffer
-static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 
 // Screen object
 static SSD1306_t SSD1306;
