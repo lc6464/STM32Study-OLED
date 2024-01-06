@@ -18,8 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "rtc.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,8 +93,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C2_Init();
   MX_RTC_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
   // Init lcd using one of the stm32HAL i2c typedefs
@@ -123,10 +127,13 @@ int main(void)
 
     seconds = time.Seconds;
 
-    sprintf(timeString, "%.2hu:%.2hu:%.2hu", time.Hours, time.Minutes, time.Seconds);
+    sprintf(timeString, "%.2hu:%.2hu:%.2hu", time.Hours, time.Minutes, time.Seconds); // 格式化时间为字符串
 
     ssd1306_SetCursor(20, 23);
     ssd1306_WriteString(timeString, Font_11x18, White);
+
+    timeString[8] = '\n';                                     // 换行
+    HAL_UART_Transmit_DMA(&huart1, (uint8_t *)timeString, 9); // 让 DMA 给串口发时间
 
     ssd1306_UpdateScreen(&hi2c2);
 
