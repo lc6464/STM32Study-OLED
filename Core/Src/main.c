@@ -117,6 +117,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    /*
+
     HAL_RTC_GetTime(&hrtc, &time, RTC_FORMAT_BIN);
     HAL_RTC_GetDate(&hrtc, NULL, RTC_FORMAT_BIN);
 
@@ -136,6 +138,46 @@ int main(void)
     HAL_UART_Transmit_DMA(&huart1, (uint8_t *)timeString, 9); // 让 DMA 给串口发时间
 
     ssd1306_UpdateScreen(&hi2c2);
+
+    */
+
+    HAL_UART_Transmit_DMA(&huart1, "Lily, I love you!\n", 18);
+
+    ssd1306_SetCursor(48, 23);
+    ssd1306_WriteString("Lily", Font_11x18, White);
+
+    ssd1306_UpdateScreen(&hi2c2);
+
+    HAL_Delay(1000);
+
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(58, 23);
+    ssd1306_WriteString("I", Font_11x18, White);
+
+    ssd1306_UpdateScreen(&hi2c2);
+
+    HAL_Delay(500);
+
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(48, 23);
+    ssd1306_WriteString("love", Font_11x18, White);
+
+    ssd1306_UpdateScreen(&hi2c2);
+
+    HAL_Delay(500);
+
+    ssd1306_Fill(Black);
+
+    ssd1306_SetCursor(58, 23);
+    ssd1306_WriteString("u", Font_11x18, White);
+
+    ssd1306_UpdateScreen(&hi2c2);
+
+    ssd1306_Fill(Black);
+
+    HAL_Delay(2000);
 
     /* USER CODE END WHILE */
 
